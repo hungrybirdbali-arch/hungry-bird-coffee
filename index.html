@@ -284,19 +284,19 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);di
 const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQzjiQefUe1FhgqFshxjIA74Ti7MH_q6YYq3ZmN7t6_udixbRAhH08fzj6O2JwQBsjeeiB0S9-ikJf5/pub?gid=603533182&single=true&output=csv';
 
 const FOTO = {
-  'Bali Munduk': '/foto/munduk.jpg',
-  'Garut Collective': '/foto/garut-collective.jpg',
-  'Sunda Klasik': '/foto/sunda-klasik.jpg',
-  'Ethiopia Mewa': '/foto/mewa.jpg',
-  'Argopuro Walida': '/foto/argopuro-walida.jpg',
-  'Karamo G1': '/foto/karamo.jpg',
-  'Bali Kintamani Arca Ulian': '/foto/kintamani.jpg',
-  'Berawa Blend': '/foto/berawa-blend.jpg',
-  'Made in Canggu Blend': '/foto/guji-siko.jpg',
-  'Ease Blend': '/foto/ease-blend.jpg',
-  'Brazil': '/foto/brazil.jpg',
-  'Colombian Decaffeinated': '/foto/colombia-decaff.jpg',
-  'Bali Munduk Espresso': '/foto/munduk-espresso.jpg',
+  'Bali Munduk': 'foto/munduk.jpg',
+  'Garut Collective': 'foto/garut-collective.jpg',
+  'Sunda Klasik': 'foto/sunda-klasik.jpg',
+  'Ethiopia Mewa': 'foto/mewa.jpg',
+  'Argopuro Walida': 'foto/argopuro-walida.jpg',
+  'Karamo G1': 'foto/karamo.jpg',
+  'Bali Kintamani Arca Ulian': 'foto/kintamani.jpg',
+  'Berawa Blend': 'foto/berawa-blend.jpg',
+  'Made in Canggu Blend': 'foto/guji-siko.jpg',
+  'Ease Blend': 'foto/ease-blend.jpg',
+  'Brazil': 'foto/brazil.jpg',
+  'Colombian Decaffeinated': 'foto/colombia-decaff.jpg',
+  'Bali Munduk Espresso': 'foto/munduk-espresso.jpg',
 };
 
 const PRICE = {
@@ -393,7 +393,7 @@ function processCSV(rows){
     if(status==='sold out'||status==='soldout')continue;
     const code=(r[idx.code]||'R1').trim().toUpperCase();
     let photo=idx.photo>=0?r[idx.photo]?.trim().replace(/\r/g,'')||'':'';
-    if(photo&&!photo.startsWith('http')&&!photo.startsWith('/')){photo='/foto/'+photo;}
+    if(photo&&!photo.startsWith('http')&&!photo.startsWith('/')){photo='foto/'+photo;}
       out.push({cat:idx.cat>=0?r[idx.cat]?.trim()||'Filter':'Filter',name,process:idx.process>=0?r[idx.process]?.trim()||'':'',code,notes:idx.notes>=0?r[idx.notes]?.trim()||'':'',desc:idx.desc>=0?r[idx.desc]?.trim()||'':'',photo:''});
   }return out;
 }
