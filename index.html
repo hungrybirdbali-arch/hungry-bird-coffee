@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Coffee List — Hungry Bird</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1E2D47;
+  --navy-mid:#2D5A8E;
+  --navy-light:#A8B8CC;
+  --cream:#F7F6F2;
+  --cream-dark:#EAE4DA;
+  --cream-blue:#DDE4EA;
+  --border:#E2DDD6;
+  --text:#1E2D47;
+  --muted:#9E9A93;
+  --white:#fff;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);display:flex;flex-direction:column}
+
+/* ── NAV ── */
+.nav{background:var(--navy);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-logo img{height:28px;filter:brightness(0) invert(1);object-fit:contain}
+.nav-logo-text{font-family:'Playfair Display',serif;font-size:20px;color:var(--cream);font-weight:400;letter-spacing:-.3px}
+.nav-actions{display:flex;gap:8px}
+.nav-btn{width:32px;height:32px;border-radius:50%;border:1px solid rgba(247,246,242,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent}
+.nav-btn svg{width:14px;height:14px;stroke:var(--cream);fill:none;stroke-width:1.5}
+
+/* ── HERO ── */
+.hero{background:var(--navy);padding:2px 18px 20px;flex-shrink:0}
+.hero-sub{font-size:9px;color:rgba(247,246,242,.45);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:5px}
+.hero-title{font-family:'Playfair Display',serif;font-size:28px;color:var(--cream);font-weight:400;line-height:1.15}
+.hero-title em{font-style:italic;color:var(--navy-light)}
+.open-badge{display:inline-flex;align-items:center;gap:5px;margin-top:10px;background:rgba(247,246,242,.1);border:1px solid rgba(247,246,242,.15);border-radius:20px;padding:4px 10px;font-size:10px;color:var(--cream)}
+.open-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dot-open{background:#4ADE80;animation:pulse 2s infinite}
+.dot-closed{background:#F87171}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── TOOLBAR ── */
+.toolbar{background:var(--cream);padding:12px 18px 0;flex-shrink:0}
+.search-box{background:var(--white);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;gap:8px;padding:0 12px;margin-bottom:11px}
+.search-box svg{width:13px;height:13px;stroke:var(--muted);fill:none;stroke-width:1.5;flex-shrink:0}
+.search-box input{border:none;background:transparent;padding:10px 0;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);outline:none;width:100%;-webkit-appearance:none}
+.search-box input::placeholder{color:var(--muted)}
+
+/* ── CAT TABS ── */
+.cat-row{display:flex;gap:6px;padding:0 18px 11px;background:var(--cream);overflow-x:auto;flex-shrink:0}
+.cat-row::-webkit-scrollbar{display:none}
+.ctab{padding:6px 16px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:'Inter',sans-serif;border:none;letter-spacing:.2px}
+.ctab-on{background:var(--navy);color:var(--cream)}
+.ctab-off{background:transparent;color:var(--muted);border:1px solid var(--border)}
+
+/* ── PROCESS PILLS ── */
+.pill-row{display:flex;gap:6px;padding:0 18px 12px;background:var(--cream);overflow-x:auto;flex-shrink:0}
+.pill-row::-webkit-scrollbar{display:none}
+.ppill{padding:4px 12px;border-radius:20px;font-size:10px;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:'Inter',sans-serif;border:none;letter-spacing:.2px}
+.ppill-on{background:var(--navy-mid);color:var(--white)}
+.ppill-off{background:transparent;color:var(--muted);border:1px solid var(--border)}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 18px 100px}
+
+/* ── SECTION LABEL ── */
+.sec-lbl{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;padding:12px 0 10px;display:flex;align-items:center;gap:10px}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── COUNT ── */
+.count-txt{font-size:11px;color:var(--muted);margin-bottom:10px}
+.count-txt b{color:var(--text);font-weight:500}
+
+/* ── GRID ── */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.card{background:var(--white);border-radius:14px;overflow:hidden;border:1px solid #EDE8E0;cursor:pointer;transition:transform .15s}
+.card:active{transform:scale(.97)}
+.card-img{width:100%;aspect-ratio:1/1;background:transparent;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.card-img img{width:100%;height:100%;object-fit:cover}
+.card-img svg{width:26px;height:26px;stroke:#C4B9A8;fill:none;stroke-width:1;opacity:.7}
+.card-img.espresso-bg{background:var(--cream-blue)}
+.badge{position:absolute;top:7px;left:7px;font-size:8px;font-weight:600;padding:2px 8px;border-radius:20px;letter-spacing:.6px;text-transform:uppercase}
+.badge-f{background:var(--navy);color:var(--cream)}
+.badge-e{background:var(--navy-mid);color:var(--white)}
+.card-body{padding:9px 10px 11px}
+.card-name{font-family:'Playfair Display',serif;font-size:12px;color:var(--navy);line-height:1.3;margin-bottom:2px}
+.card-proc{font-size:9px;color:var(--muted);letter-spacing:.3px;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-price{font-size:10px;font-weight:600;color:var(--navy-mid);margin-bottom:4px}
+.card-notes{font-size:9px;color:#6B6660;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ── LIST VIEW ── */
+.list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.list-item{background:var(--white);border:1px solid #EDE8E0;border-radius:12px;display:flex;gap:10px;padding:10px 12px;cursor:pointer;align-items:center}
+.list-item:active{background:#fafaf8}
+.list-thumb{width:52px;height:52px;border-radius:8px;flex-shrink:0;overflow:hidden;background:var(--cream-dark);display:flex;align-items:center;justify-content:center}
+.list-thumb img{width:100%;height:100%;object-fit:cover}
+.list-thumb svg{width:22px;height:22px;stroke:#C4B9A8;fill:none;stroke-width:1;opacity:.7}
+.list-thumb.esp{background:var(--cream-blue)}
+.list-info{flex:1;min-width:0}
+.list-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:2px}
+.list-name{font-family:'Playfair Display',serif;font-size:13px;color:var(--navy);line-height:1.3}
+.list-price{font-size:11px;font-weight:600;color:var(--navy-mid);white-space:nowrap}
+.list-proc{font-size:10px;color:var(--muted);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list-notes{font-size:10px;color:#6B6660;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ── MODAL ── */
+.overlay{position:absolute;inset:0;background:rgba(20,28,40,.55);display:flex;align-items:flex-end;justify-content:center;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
+.overlay.show{opacity:1;pointer-events:all}
+.modal{background:var(--white);border-radius:20px 20px 0 0;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translateY(100%);transition:transform .25s cubic-bezier(.32,.72,0,1)}
+.overlay.show .modal{transform:translateY(0)}
+.modal-img{width:100%;height:180px;background:transparent;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.modal-img img{width:100%;height:100%;object-fit:cover}
+.modal-img svg{width:50px;height:50px;stroke:#C4B9A8;fill:none;stroke-width:1;opacity:.6}
+.modal-img.esp-img{background:var(--cream-blue)}
+.modal-close{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:rgba(30,45,71,.5);border:none;color:var(--cream);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.modal-body{padding:18px}
+.modal-badge{display:inline-block;font-size:8px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--navy);color:var(--cream);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px}
+.modal-badge.esp{background:var(--navy-mid)}
+.modal-name{font-family:'Playfair Display',serif;font-size:20px;color:var(--navy);font-weight:400;margin-bottom:3px}
+.modal-proc{font-size:11px;color:var(--muted);letter-spacing:.3px;margin-bottom:16px}
+.modal-lbl{font-size:8px;font-weight:600;color:var(--muted);letter-spacing:1.8px;text-transform:uppercase;margin-bottom:6px}
+.modal-notes{font-size:13px;color:var(--text);line-height:1.65;margin-bottom:16px}
+.modal-desc{font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:16px}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px}
+.pbox{background:var(--cream);border-radius:10px;padding:10px 6px;text-align:center}
+.pbox-w{font-size:8px;color:var(--muted);letter-spacing:.5px;margin-bottom:4px}
+.pbox-v{font-size:12px;font-weight:600;color:var(--navy-mid)}
+.pkg-note{font-size:10px;color:var(--muted);text-align:center;margin-top:2px}
+
+/* ── FOOTER INFO ── */
+.footer{background:var(--navy);padding:20px 18px;flex-shrink:0}
+.footer-logo{font-family:'Playfair Display',serif;font-size:16px;color:var(--cream);margin-bottom:4px}
+.footer-tagline{font-size:9px;color:rgba(247,246,242,.45);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.footer-info{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.footer-row{display:flex;align-items:flex-start;gap:8px}
+.footer-row svg{width:13px;height:13px;stroke:var(--navy-light);fill:none;stroke-width:1.5;flex-shrink:0;margin-top:1px}
+.footer-row span{font-size:11px;color:rgba(247,246,242,.75);line-height:1.5}
+.footer-row a{font-size:11px;color:var(--navy-light);text-decoration:none}
+.footer-actions{display:flex;gap:8px}
+.footer-btn{flex:1;padding:9px;border-radius:8px;font-size:11px;font-family:'Inter',sans-serif;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;text-decoration:none;border:none}
+.btn-maps{background:var(--white);color:var(--navy)}
+.btn-wa{background:rgba(247,246,242,.12);color:var(--cream);border:1px solid rgba(247,246,242,.2)}
+.footer-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.5}
+.footer-copy{font-size:9px;color:rgba(247,246,242,.25);text-align:center;margin-top:14px;letter-spacing:.5px}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{background:var(--navy);border-top:1px solid rgba(247,246,242,.1);padding:8px 18px 14px;display:flex;justify-content:space-around;flex-shrink:0;position:absolute;bottom:0;left:0;right:0}
+.bitem{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;background:none;border:none;font-family:'Inter',sans-serif}
+.bitem svg{width:18px;height:18px;fill:none;stroke-width:1.5}
+.bitem span{font-size:8px;letter-spacing:.4px}
+.bitem.on svg{stroke:var(--cream)}
+.bitem.on span{color:var(--cream)}
+.bitem.off svg{stroke:rgba(247,246,242,.3)}
+.bitem.off span{color:rgba(247,246,242,.3)}
+
+/* ── STATES ── */
+.loading-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:12px}
+.spinner{width:26px;height:26px;border:2.5px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:12px;color:var(--muted)}
+.empty{text-align:center;padding:50px 20px;color:var(--muted);font-size:13px}
+.error-box{background:var(--white);border:1px solid #fca5a5;border-radius:10px;padding:20px;font-size:13px;color:#991b1b;line-height:1.6;margin:12px 0}
+
+/* ── VIEW TOGGLE ── */
+.view-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-top:4px}
+.view-toggle{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--white)}
+.vbtn{padding:6px 10px;background:transparent;border:none;cursor:pointer;color:var(--muted);display:flex;align-items:center}
+.vbtn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.5}
+.vbtn.on{background:var(--navy);color:var(--cream)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nav-logo-text">Hungry Bird</div>
+  </div>
+  <div class="nav-actions">
+    <button class="nav-btn" onclick="scrollToFooter()" title="Info cafe" aria-label="Info cafe">
+      <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    </button>
+    <button class="nav-btn" onclick="toggleSearch()" title="Cari" aria-label="Cari kopi">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    </button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-sub">Current Offerings</div>
+  <div class="hero-title">Coffee<br><em>List.</em></div>
+  <div class="open-badge" id="openBadge">
+    <div class="open-dot dot-open" id="openDot"></div>
+    <span id="openText">Open today · 08.00–17.00</span>
+  </div>
+</div>
+
+<div class="toolbar" id="searchBar" style="display:none">
+  <div class="search-box">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="Search origin, tasting notes..." oninput="render()" autocomplete="off">
+  </div>
+</div>
+
+<div class="cat-row">
+  <button class="ctab ctab-on" onclick="setCat('all',this)">All</button>
+  <button class="ctab ctab-off" onclick="setCat('Filter',this)">Filter</button>
+  <button class="ctab ctab-off" onclick="setCat('Espresso',this)">Espresso</button>
+</div>
+
+<div class="pill-row" id="pillRow"></div>
+
+<div class="content" id="mainContent">
+  <div id="loadingState" class="loading-wrap">
+    <div class="spinner"></div>
+    <div class="loading-text">Loading coffee list...</div>
+  </div>
+  <div id="mainArea" style="display:none">
+    <div class="view-row">
+      <div class="count-txt" id="countTxt"></div>
+      <div class="view-toggle">
+        <button class="vbtn on" id="btn-grid" onclick="setView('grid')" aria-label="Grid view">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        </button>
+        <button class="vbtn off" id="btn-list" onclick="setView('list')" aria-label="List view">
+          <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="container"></div>
+  </div>
+  <div id="errorState" class="error-box" style="display:none">
+    Gagal memuat data. Periksa koneksi lalu coba lagi.
+    <br><button onclick="loadData()" style="margin-top:8px;padding:6px 12px;background:var(--navy);color:var(--cream);border:none;border-radius:6px;font-size:12px;cursor:pointer">Coba lagi</button>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer" id="footerSection">
+    <div class="footer-logo">Hungry Bird</div>
+    <div class="footer-tagline">Roasting in Canggu since 2013</div>
+    <div class="footer-info">
+      <div class="footer-row">
+        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span>Jl. Raya Semat / Segara Perancak No.86,<br>Tibubeneng, Canggu, Bali</span>
+      </div>
+      <div class="footer-row">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Monday – Sunday · 08.00 – 17.00</span>
+      </div>
+      <div class="footer-row">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <a href="tel:+6281250004643">+62 812 5000 4643</a>
+      </div>
+      <div class="footer-row">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        <a href="https://instagram.com/hungrybirdcoffee" target="_blank">@hungrybirdcoffee</a>
+      </div>
+    </div>
+    <div class="footer-actions">
+      <a class="footer-btn btn-maps" href="https://maps.app.goo.gl/dnApAL9SKLDfpkjH6" target="_blank">
+        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Get Directions
+      </a>
+      <a class="footer-btn btn-wa" href="tel:+6281250004643">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.29 6.29l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Call Us
+      </a>
+    </div>
+    <div class="footer-copy">© 2026 Hungry Bird Coffee Roaster · Canggu, Bali</div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()" aria-label="Tutup">×</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQzjiQefUe1FhgqFshxjIA74Ti7MH_q6YYq3ZmN7t6_udixbRAhH08fzj6O2JwQBsjeeiB0S9-ikJf5/pub?gid=603533182&single=true&output=csv';
+
+const FOTO = {
+  'Bali Munduk': '/foto/munduk.jpg',
+  'Garut Collective': '/foto/garut-collective.jpg',
+  'Sunda Klasik': '/foto/sunda-klasik.jpg',
+  'Ethiopia Mewa': '/foto/mewa.jpg',
+  'Argopuro Walida': '/foto/argopuro-walida.jpg',
+  'Karamo G1': '/foto/karamo.jpg',
+  'Bali Kintamani Arca Ulian': '/foto/kintamani.jpg',
+  'Berawa Blend': '/foto/berawa-blend.jpg',
+  'Made in Canggu Blend': '/foto/guji-siko.jpg',
+  'Ease Blend': '/foto/ease-blend.jpg',
+  'Brazil': '/foto/brazil.jpg',
+  'Colombian Decaffeinated': '/foto/colombia-decaff.jpg',
+  'Bali Munduk Espresso': '/foto/munduk-espresso.jpg',
+};
+
+const PRICE = {
+  R1:{g200:'Rp 135.000',g500:'Rp 255.000',g1kg:'Rp 435.000'},
+  R2:{g200:'Rp 155.000',g500:'Rp 320.000',g1kg:'Rp 580.000'},
+  R3:{g200:'Rp 180.000',g500:'Rp 360.000',g1kg:'Rp 670.000'},
+  R4:{g200:'Rp 215.000',g500:'Rp 465.000',g1kg:'Rp 835.000'},
+};
+
+const DEMO=[
+  {cat:'Filter',name:'Bali Munduk',process:'Natural',code:'R3',notes:'Orange, Nectarine, Berries, Chocolate, Nutty, Herbaceous',desc:'Single origin Bali Munduk dengan proses natural yang menghasilkan profil buah yang kaya.',photo:''},
+  {cat:'Filter',name:'Garut Collective',process:'Fullwash',code:'R2',notes:'Tangerine, Lemon, Caramel, Herbaceous, Black Tea',desc:'Kopi kolektif dari petani Garut dengan proses fullwash yang bersih dan terang.',photo:''},
+  {cat:'Filter',name:'Sunda Klasik',process:'Natural',code:'R3',notes:'Mango, Apricot, Brown Sugar, Floral',desc:'Kopi Sunda dengan karakter buah tropis dan rasa manis alami.',photo:''},
+  {cat:'Filter',name:'Bali Kintamani Arca Ulian',process:'Honey',code:'R3',notes:'Grape, Pear, Tangerine, Honey, Chocolate, Floral of Black Tea',desc:'Honey process dari Arca Ulian menghasilkan keseimbangan buah dan cokelat yang indah.',photo:''},
+  {cat:'Filter',name:'Bali Kintamani Arca Ulian',process:'Washed',code:'R2',notes:'Grapefruit, Caramel, Chocolate, Herbs, Black Tea',desc:'Versi washed dari Arca Ulian — lebih bersih dengan keasaman cerah.',photo:''},
+  {cat:'Filter',name:'Bali Kintamani Arca Ulian',process:'Natural',code:'R3',notes:'Mandarin Orange, White Grape, Tropical Fruit, Honey, Black Tea',desc:'Natural process mengintensifkan karakter buah jeruk dan anggur khas Kintamani.',photo:''},
+  {cat:'Filter',name:'Bali Kintamani Usda Ulian',process:'Modern Natural',code:'R3',notes:'Hibiscus Tea, Strawberry Candy, Peach, Pomegranate, 80% Dark Chocolate',desc:'Modern natural process dengan fermentasi terkontrol menghasilkan profil yang sangat unik.',photo:''},
+  {cat:'Filter',name:'Ethiopia Mewa',process:'Natural',code:'R4',notes:'White Flower, Guava, Peach, Bergamot',desc:'Single origin Ethiopia dengan karakter floral dan buah yang elegance.',photo:''},
+  {cat:'Filter',name:'Argopuro Walida',process:'Carbonic Maceration Natural',code:'R3',notes:'Muscat Grape, Plum, Orange, Cacao',desc:'Carbonic maceration memberikan karakter anggur dan buah yang intens.',photo:''},
+  {cat:'Filter',name:'Karamo G1',process:'Natural Anaerobic',code:'R4',notes:'Blueberry, Clementine, Chamomile',desc:'Grade 1 anaerobic natural dengan profil berry yang meledak dan aroma chamomile.',photo:''},
+  {cat:'Espresso',name:'Berawa Blend',process:'Brazil Cerrado (N) · Colombia Supremo (W) · Sumatra Kerinci (WH)',code:'R1',notes:'BLACK: Chocolaty, Citrus, Molasses, Spice · WHITE: Sweet Dark Chocolate, Praline, Peanut Butter',desc:'Blend andalan untuk espresso — seimbang antara body cokelat dan keasaman citrus.',photo:''},
+  {cat:'Espresso',name:'Indo Blend',process:'Bali Kintamani (W) · Aceh Gayo (WH) · East Java Ijen (W)',code:'R1',notes:'BLACK: Citrus, Brown Sugar, Cacao, Herb & Spice · WHITE: Milk Chocolate, Biscuit, Butterscotch',desc:'Full Indonesian blend dengan karakter archipelago yang kaya.',photo:''},
+  {cat:'Espresso',name:'Made in Canggu Blend',process:'Ethiopia Guji (N) · Colombia Supremo (W) · West Java Gunung Tilu (W)',code:'R2',notes:'BLACK: Floral, Orange Marmalade, Apricot, Caramel · WHITE: White Chocolate, Wafer, Vanilla Cream',desc:'Blend premium dengan karakter floral Ethiopia — signature Hungry Bird.',photo:''},
+  {cat:'Espresso',name:'Ease Blend',process:'Ethiopia Kochere (N) · Bali Munduk (N) · Gunung Tilu (W)',code:'R4',notes:'Pomelo, Strawberry, Earl Grey',desc:'Espresso blend specialty dengan profil buah cerah dan aroma teh yang elegan.',photo:''},
+  {cat:'Espresso',name:'Sumatra Aceh Gayo',process:'Wet Hulled',code:'R1',notes:'Brown Sugar, Herbs, Dark Chocolate, Citrus, Star Anise',desc:'Klasik Sumatra dengan proses wet hulled — body tebal, earthy, dan kompleks.',photo:''},
+  {cat:'Espresso',name:'Brazil',process:'Natural',code:'R3',notes:'Hazelnut, Citrus, Cocoa, Balanced',desc:'Brazil natural yang smooth dan balance.',photo:''},
+  {cat:'Espresso',name:'Colombian Decaffeinated',process:'Decaffeinated',code:'R4',notes:'Black: Cherry, Lemon, Malt, Black Tea, 80% Dark Chocolate · White: Chocolate Fudge, Vanilla, Lemon',desc:'Decaf premium dari Colombia — tanpa kafein tapi tidak kehilangan kompleksitas rasa.',photo:''},
+  {cat:'Espresso',name:'Bali Kintamani Arca Ulian',process:'Washed',code:'R2',notes:'Grapefruit, Caramel, Chocolate, Black Tea, Herbs',desc:'Arca Ulian washed sebagai espresso — brightness menarik dengan finish cokelat.',photo:''},
+  {cat:'Espresso',name:'Bali Munduk',process:'Natural',code:'R3',notes:'Orange, Nectarine, Berries, Chocolate, Nutty, Herbaceous',desc:'Bali Munduk natural untuk espresso — body kuat dengan karakter buah berkarakter.',photo:''},
+];
+
+let allData=[], viewMode='grid', activeCat='all', activeProcess='';
+
+// Open/closed badge
+function checkOpenStatus(){
+  const now=new Date();
+  const h=now.getHours(), m=now.getMinutes();
+  const totalMin=h*60+m;
+  const isOpen=totalMin>=480&&totalMin<1020; // 08:00–17:00
+  const dot=document.getElementById('openDot');
+  const txt=document.getElementById('openText');
+  if(isOpen){dot.className='open-dot dot-open';txt.textContent='Open now · Closes at 17.00';}
+  else{dot.className='open-dot dot-closed';txt.textContent='Closed · Opens at 08.00';}
+}
+
+function parseCSV(t){
+  // Proper CSV parser that handles multiline cells (newlines inside quotes)
+  const rows=[];
+  let row=[],cur='',inQ=false;
+  for(let i=0;i<t.length;i++){
+    const ch=t[i];
+    if(ch==='"'){
+      if(inQ&&t[i+1]==='"'){cur+='"';i++;}
+      else inQ=!inQ;
+    } else if(ch===','&&!inQ){
+      row.push(cur.trim());cur='';
+    } else if((ch==='\n'||ch==='\r')&&!inQ){
+      if(ch==='\r'&&t[i+1]==='\n')i++;
+      row.push(cur.trim());
+      if(row.some(c=>c!==''))rows.push(row);
+      row=[];cur='';
+    } else {
+      cur+=ch;
+    }
+  }
+  if(cur||row.length)rows.push([...row,cur.trim()]);
+  return rows;
+}
+
+function processCSV(rows){
+  let hdr=-1;
+  for(let i=0;i<rows.length;i++){
+    if(rows[i].some(c=>c==='Nama Kopi'||c.includes('Nama Kopi'))){hdr=i;break;}
+  }
+  if(hdr<0)return[];
+  const h=rows[hdr].map(c=>c.trim().toLowerCase().replace(/\r/g,'').replace(/\n/g,''));
+  const photoIdx=h.findIndex(c=>c.includes('foto_url')||c.includes('foto url')||c==='foto_url');
+  const idx={
+    status:h.findIndex(c=>c.includes('status')),
+    cat:h.findIndex(c=>c.includes('kategori')),
+    name:h.findIndex(c=>c.includes('nama kopi')||c==='nama kopi'),
+    process:h.findIndex(c=>c.includes('proses')),
+    code:h.findIndex(c=>c.includes('price code')),
+    notes:h.findIndex(c=>c.includes('tasting')),
+    desc:h.findIndex(c=>c.includes('deskripsi')),
+    photo:photoIdx>=0?photoIdx:10
+  };
+  const out=[];
+  for(let i=hdr+1;i<rows.length;i++){
+    const r=rows[i];
+    const name=r[idx.name]?.trim();
+    if(!name)continue;
+    const status=(r[idx.status]||'').trim().toLowerCase();
+    if(status==='sold out'||status==='soldout')continue;
+    const code=(r[idx.code]||'R1').trim().toUpperCase();
+    let photo=idx.photo>=0?r[idx.photo]?.trim().replace(/\r/g,'')||'':'';
+    if(photo&&!photo.startsWith('http')&&!photo.startsWith('/')){photo='/foto/'+photo;}
+      out.push({cat:idx.cat>=0?r[idx.cat]?.trim()||'Filter':'Filter',name,process:idx.process>=0?r[idx.process]?.trim()||'':'',code,notes:idx.notes>=0?r[idx.notes]?.trim()||'':'',desc:idx.desc>=0?r[idx.desc]?.trim()||'':'',photo:''});
+  }return out;
+}
+
+async function loadData(){
+  document.getElementById('loadingState').style.display='flex';
+  document.getElementById('mainArea').style.display='none';
+  document.getElementById('errorState').style.display='none';
+  const isDemo=!SHEET_CSV||SHEET_CSV==='PASTE_CSV_URL_DISINI';
+  if(isDemo){allData=DEMO;finish();return;}
+  try{
+    const res=await fetch(SHEET_CSV+'&t='+Date.now());
+    if(!res.ok)throw new Error();
+    const parsed=processCSV(parseCSV(await res.text()));
+    allData=parsed.length?parsed:DEMO;finish();
+  }catch(e){document.getElementById('loadingState').style.display='none';document.getElementById('errorState').style.display='block';}
+}
+
+function finish(){buildPills();render();document.getElementById('loadingState').style.display='none';document.getElementById('mainArea').style.display='block';}
+
+function buildPills(){
+  const procs=[...new Set(allData.filter(b=>activeCat==='all'||b.cat===activeCat).map(b=>b.process))].filter(Boolean);
+  const row=document.getElementById('pillRow');
+  row.innerHTML='';
+  const all=document.createElement('button');all.className='ppill ppill-on';all.textContent='All Process';all.onclick=function(){setProcess('',this)};row.appendChild(all);
+  procs.forEach(p=>{const b=document.createElement('button');b.className='ppill ppill-off';b.textContent=p;b.onclick=function(){setProcess(p,this)};row.appendChild(b);});
+}
+
+function setCat(cat,el){activeCat=cat;activeProcess='';document.querySelectorAll('.ctab').forEach(t=>{t.className='ctab ctab-off'});el.className='ctab ctab-on';buildPills();render();}
+function setProcess(p,el){activeProcess=p;document.querySelectorAll('.ppill').forEach(t=>{t.className='ppill ppill-off'});el.className='ppill ppill-on';render();}
+function setView(v){viewMode=v;document.getElementById('btn-grid').className='vbtn '+(v==='grid'?'on':'off');document.getElementById('btn-list').className='vbtn '+(v==='list'?'on':'off');render();}
+
+let searchVisible=false;
+function toggleSearch(){searchVisible=!searchVisible;document.getElementById('searchBar').style.display=searchVisible?'block':'none';if(searchVisible)document.getElementById('searchInput').focus();}
+function scrollToFooter(){document.getElementById('footerSection').scrollIntoView({behavior:'smooth'});}
+
+function getFiltered(){
+  const q=(document.getElementById('searchInput')?.value||'').toLowerCase().trim();
+  return allData.filter(b=>{
+    const mC=activeCat==='all'||b.cat===activeCat;
+    const mP=!activeProcess||b.process===activeProcess;
+    const mQ=!q||(b.name+b.notes+b.desc+b.process).toLowerCase().includes(q);
+    return mC&&mP&&mQ;
+  });
+}
+
+function getInitials(name){
+  const words=name.trim().split(' ').filter(Boolean);
+  if(words.length>=2)return(words[0][0]+words[1][0]).toUpperCase();
+  return words[0].substring(0,2).toUpperCase();
+}
+function navyAvatar(name,size,cat){
+  const ini=getInitials(name);
+  const isEsp=cat==='Espresso';
+  // Filter = navy blue, Espresso = warm dark brown
+  const bg1=isEsp?'#3B2A1A':'#2C3E5A';
+  const bg2=isEsp?'#2A1E12':'#1E2D47';
+  const label=isEsp?'Espresso':'Filter';
+  if(size==='sm')return '<div style="width:100%;height:100%;background:'+bg1+';display:flex;align-items:center;justify-content:center"><span style=\'font-family:Playfair Display,serif;font-size:22px;font-weight:400;color:rgba(247,246,242,0.85);letter-spacing:3px\'>'+ini+'</span></div>';
+  return '<div style="width:100%;height:100%;background:linear-gradient(145deg,'+bg1+','+bg2+');display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px"><span style=\'font-family:Playfair Display,serif;font-size:52px;font-weight:400;color:rgba(247,246,242,0.9);letter-spacing:6px;line-height:1\'>'+ini+'</span><div style=\'width:32px;height:0.5px;background:rgba(247,246,242,0.2)\'></div><span style=\'font-size:8px;color:rgba(247,246,242,0.35);letter-spacing:2.5px;text-transform:uppercase\'>'+label+'</span></div>';
+}
+
+function render(){
+  const filtered=getFiltered();
+  document.getElementById('countTxt').innerHTML=`<b>${filtered.length}</b> kopi tersedia`;
+  const c=document.getElementById('container');c.innerHTML='';
+  if(!filtered.length){c.innerHTML='<div class="empty">Tidak ada kopi yang cocok</div>';return;}
+  if(viewMode==='grid'){
+    const filterItems=filtered.filter(b=>b.cat==='Filter');
+    const espItems=filtered.filter(b=>b.cat==='Espresso');
+    if(filterItems.length){const lbl=document.createElement('div');lbl.className='sec-lbl';lbl.textContent='Filter Coffee';c.appendChild(lbl);const g=document.createElement('div');g.className='grid';filterItems.forEach(b=>g.appendChild(makeCard(b)));c.appendChild(g);}
+    if(espItems.length){const lbl=document.createElement('div');lbl.className='sec-lbl';lbl.textContent='Espresso';c.appendChild(lbl);const g=document.createElement('div');g.className='grid';espItems.forEach(b=>g.appendChild(makeCard(b)));c.appendChild(g);}
+  } else {
+    const l=document.createElement('div');l.className='list';filtered.forEach(b=>l.appendChild(makeRow(b)));c.appendChild(l);
+  }
+}
+
+function makeCard(b){
+  const el=document.createElement('div');el.className='card';
+  const pr=PRICE[b.code]||PRICE.R1;
+  const isEsp=b.cat==='Espresso';
+  const foto=FOTO[b.name]||'';
+  el.innerHTML=`
+    <div class="card-img${isEsp?' espresso-bg':''}">
+      ${foto?`<img src="${foto}" alt="${b.name}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">`:''}
+      ${!foto?navyAvatar(b.name,'lg',b.cat):''}
+      <span class="badge ${isEsp?'badge-e':'badge-f'}">${b.cat}</span>
+    </div>
+    <div class="card-body">
+      <div class="card-name">${b.name}</div>
+      <div class="card-proc">${b.process}</div>
+      <div class="card-price">from ${pr.g200}</div>
+      <div class="card-notes">${b.notes}</div>
+    </div>`;
+  el.onclick=()=>openModal(b);return el;
+}
+
+function makeRow(b){
+  const el=document.createElement('div');el.className='list-item';
+  const pr=PRICE[b.code]||PRICE.R1;
+  const isEsp=b.cat==='Espresso';
+  const fotoR=FOTO[b.name]||'';
+  el.innerHTML=`
+    <div class="list-thumb${isEsp?' esp':''}">
+      ${fotoR?`<img src="${fotoR}" alt="${b.name}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">`:navyAvatar(b.name,'sm',b.cat)}
+    </div>
+    <div class="list-info">
+      <div class="list-top"><div class="list-name">${b.name}</div><div class="list-price">${pr.g200}</div></div>
+      <div class="list-proc">${b.process}</div>
+      <div class="list-notes">${b.notes}</div>
+    </div>`;
+  el.onclick=()=>openModal(b);return el;
+}
+
+function openModal(b){
+  const pr=PRICE[b.code]||PRICE.R1;
+  const isEsp=b.cat==='Espresso';
+  const bigIcon=navyAvatar(b.name,'lg',b.cat);
+  const fotoM=FOTO[b.name]||'';
+  document.getElementById('modalContent').innerHTML=`
+    <div class="modal-img${isEsp?' esp-img':''}">
+      ${navyAvatar(b.name,'lg',b.cat)}
+    </div>
+    <div class="modal-body">
+      <div class="modal-badge${isEsp?' esp':''}">${b.cat}</div>
+      <div class="modal-name">${b.name}</div>
+      <div class="modal-proc">${b.process}</div>
+      <div class="modal-lbl">Tasting Notes</div>
+      <div class="modal-notes">${b.notes}</div>
+      ${b.desc?`<div class="modal-lbl">About This Coffee</div><div class="modal-desc">${b.desc}</div>`:''}
+      <div class="modal-lbl">Retail Price (${b.code})</div>
+      <div class="price-grid">
+        <div class="pbox"><div class="pbox-w">200g</div><div class="pbox-v">${pr.g200}</div></div>
+        <div class="pbox"><div class="pbox-w">500g</div><div class="pbox-v">${pr.g500}</div></div>
+        <div class="pbox"><div class="pbox-w">1 kg</div><div class="pbox-v">${pr.g1kg}</div></div>
+      </div>
+      <div class="pkg-note">+ Extra packaging Rp 15.000/pcs</div>
+    </div>`;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function closeModal(e){if(!e||e.target===document.getElementById('overlay')||e.currentTarget.tagName==='BUTTON'){document.getElementById('overlay').classList.remove('show');}}
+
+checkOpenStatus();
+loadData();
+</script>
+</body>
+</html>
+<!-- Cart styles injected -->
+<style>
+/* ── CART BUTTON (floating) ── */
+.cart-fab{position:fixed;bottom:24px;right:18px;background:var(--navy);color:var(--cream);border:none;border-radius:50px;padding:12px 18px;font-size:13px;font-family:'Inter',sans-serif;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:8px;z-index:200;box-shadow:0 4px 16px rgba(30,45,71,.35);transition:transform .15s}
+.cart-fab:active{transform:scale(.96)}
+.cart-fab svg{width:16px;height:16px;stroke:var(--cream);fill:none;stroke-width:2}
+.cart-badge{background:#E84A3A;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-left:2px}
+.cart-fab.hidden{display:none}
+
+/* ── ADD TO CART (in modal) ── */
+.add-to-cart-wrap{border-top:1px solid var(--border);padding:16px 18px;margin-top:4px}
+.atc-title{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.atc-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.atc-label{font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:500}
+.size-opts,.bean-opts{display:flex;gap:6px;flex-wrap:wrap}
+.opt-btn{padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:var(--cream);color:var(--text);font-size:12px;font-family:'Inter',sans-serif;cursor:pointer;transition:all .15s}
+.opt-btn.active{background:var(--navy);color:var(--cream);border-color:var(--navy)}
+.grind-wrap{margin-bottom:10px;display:none}
+.grind-wrap.show{display:block}
+.grind-sel{width:100%;padding:9px 12px;font-size:13px;font-family:'Inter',sans-serif;border:1px solid var(--border);border-radius:8px;background:var(--cream);color:var(--text);outline:none;-webkit-appearance:none}
+.grind-warning{background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:10px 12px;font-size:11px;color:#92400E;line-height:1.5;margin-top:8px;display:none}
+.grind-warning.show{display:block}
+.add-btn{width:100%;padding:12px;background:var(--navy);color:var(--cream);border:none;border-radius:10px;font-size:13px;font-family:'Inter',sans-serif;font-weight:500;cursor:pointer;margin-top:4px;transition:background .15s}
+.add-btn:hover{background:#2C3E5A}
+.add-btn:active{transform:scale(.98)}
+
+/* ── CART DRAWER ── */
+.cart-overlay{position:fixed;inset:0;background:rgba(20,28,40,.5);z-index:300;opacity:0;pointer-events:none;transition:opacity .2s}
+.cart-overlay.show{opacity:1;pointer-events:all}
+.cart-drawer{position:fixed;bottom:0;left:0;right:0;max-width:500px;margin:0 auto;background:var(--white);border-radius:20px 20px 0 0;max-height:85vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .25s cubic-bezier(.32,.72,0,1);z-index:301}
+.cart-overlay.show .cart-drawer{transform:translateY(0)}
+.cart-header{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.cart-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--navy)}
+.cart-close{width:28px;height:28px;border-radius:50%;background:var(--cream);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted)}
+.cart-items{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 18px}
+.cart-empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}
+.cart-item{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--border)}
+.cart-item:last-child{border-bottom:none}
+.ci-info{flex:1;min-width:0}
+.ci-name{font-size:13px;font-weight:500;color:var(--navy);margin-bottom:2px}
+.ci-detail{font-size:11px;color:var(--muted);margin-bottom:4px}
+.ci-price{font-size:12px;font-weight:600;color:var(--navy-mid)}
+.ci-remove{background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:0 4px;line-height:1;flex-shrink:0}
+.ci-remove:hover{color:#E84A3A}
+.cart-footer{padding:14px 18px;border-top:1px solid var(--border);flex-shrink:0}
+.cart-summary{margin-bottom:12px}
+.summary-row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:6px}
+.summary-row.total{font-size:15px;font-weight:600;color:var(--navy);border-top:1px solid var(--border);padding-top:8px;margin-top:4px}
+.wa-btn{width:100%;padding:14px;background:#25D366;color:#fff;border:none;border-radius:10px;font-size:14px;font-family:'Inter',sans-serif;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s}
+.wa-btn:hover{background:#1DA851}
+.wa-btn svg{width:18px;height:18px;fill:#fff}
+</style>
+
+<!-- Floating cart button -->
+<button class="cart-fab hidden" id="cartFab" onclick="openCart()">
+  <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+  Cart
+  <span class="cart-badge" id="cartBadge">0</span>
+</button>
+
+<!-- Cart drawer -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart(event)">
+  <div class="cart-drawer">
+    <div class="cart-header">
+      <div class="cart-title">Your Cart</div>
+      <button class="cart-close" onclick="closeCart()">×</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty">Your cart is empty</div>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-summary" id="cartSummary"></div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Your Name</div>
+        <input type="text" id="customerName" placeholder="Enter your name..." style="width:100%;padding:10px 12px;font-size:13px;font-family:Inter,sans-serif;border:1px solid var(--border);border-radius:8px;background:var(--cream);color:var(--text);outline:none;-webkit-appearance:none" />
+      </div>
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Order via</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="wa-btn" onclick="orderViaWA()" style="background:#25D366">
+          <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.918-1.417A9.956 9.956 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+          WhatsApp
+        </button>
+        <button class="wa-btn" onclick="orderViaOpaper()" style="background:#1E2D47">
+          <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          Opaper
+        </button>
+        <button class="wa-btn" onclick="orderViaTokopedia()" style="background:#03AC0E">
+          <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.95-1.57L23 6H6"/></svg>
+          Tokopedia
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── GRIND SIZE CHART ──
+const GRIND_SIZES = [
+  {method:'Tubruk Tradisional', level:'1'},
+  {method:'Espresso (Machine)', level:'2'},
+  {method:'Espresso (Small Machine)', level:'2.5'},
+  {method:'Espresso (Manual Flair)', level:'2.7'},
+  {method:'Moka Pot', level:'3'},
+  {method:'Vietnamese Drip', level:'4'},
+  {method:'Drip Bag', level:'4.5'},
+  {method:'V60 / Kalita Filter', level:'5'},
+  {method:'Aeropress', level:'6'},
+  {method:'French Press', level:'6.5'},
+  {method:'Tubruk / Cupping', level:'7.5'},
+  {method:'Cold Brew', level:'8'},
+];
+
+const WA_NUMBER = '6281250004643';
+const ADMIN_FEE = 1000;
+
+// ── CART STATE ──
+let cart = [];
+let currentItem = null; // item being configured in modal
+
+// ── ADD TO CART UI in modal ──
+function injectAddToCart(b) {
+  const pr = PRICE[b.code] || PRICE.R1;
+  currentItem = b;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'add-to-cart-wrap';
+  wrap.id = 'atcWrap';
+  wrap.innerHTML = `
+    <div class="atc-title">Add to Cart</div>
+    <div style="margin-bottom:10px">
+      <div class="atc-label">Size</div>
+      <div class="size-opts">
+        <button class="opt-btn active" onclick="selectSize(this,'200g','${pr.g200}')" data-size="200g" data-price="${pr.g200}">200g</button>
+        <button class="opt-btn" onclick="selectSize(this,'500g','${pr.g500}')" data-size="500g" data-price="${pr.g500}">500g</button>
+        <button class="opt-btn" onclick="selectSize(this,'1kg','${pr.g1kg}')" data-size="1kg" data-price="${pr.g1kg}">1 kg</button>
+      </div>
+    </div>
+    <div style="margin-bottom:10px">
+      <div class="atc-label">Bean Type</div>
+      <div class="bean-opts">
+        <button class="opt-btn active" onclick="selectBean(this,'Whole Bean')" id="btnWhole">Whole Bean</button>
+        <button class="opt-btn" onclick="selectBean(this,'Ground')" id="btnGround">Ground</button>
+      </div>
+    </div>
+    <div class="grind-wrap" id="grindWrap">
+      <div class="atc-label">Grind Size</div>
+      <select class="grind-sel" id="grindSel">
+        <option value="">— Select brew method —</option>
+        ${GRIND_SIZES.map(g=>`<option value="${g.method} (Level ${g.level})">${g.method} — Level ${g.level}</option>`).join('')}
+      </select>
+      <div class="grind-warning show" id="grindWarning">
+        ⚠️ <strong>Please note:</strong> Ground coffee cannot be returned, exchanged, or refunded once processed. Please ensure your grind size selection is correct before ordering.
+      </div>
+    </div>
+    <button class="add-btn" onclick="addToCart()">Add to Cart</button>
+  `;
+  document.getElementById('modalContent').appendChild(wrap);
+}
+
+let selectedSize = '200g';
+let selectedSizePrice = '';
+let selectedBean = 'Whole Bean';
+
+function selectSize(el, size, price) {
+  document.querySelectorAll('.size-opts .opt-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  selectedSize = size;
+  selectedSizePrice = price;
+}
+
+function selectBean(el, bean) {
+  document.querySelectorAll('.bean-opts .opt-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  selectedBean = bean;
+  const grindWrap = document.getElementById('grindWrap');
+  if (bean === 'Ground') {
+    grindWrap.classList.add('show');
+  } else {
+    grindWrap.classList.remove('show');
+    document.getElementById('grindSel').value = '';
+  }
+}
+
+function addToCart() {
+  if (!currentItem) return;
+  const pr = PRICE[currentItem.code] || PRICE.R1;
+
+  // Reset selected size price on first add
+  const sizeMap = {'200g': pr.g200, '500g': pr.g500, '1kg': pr.g1kg};
+  const priceStr = sizeMap[selectedSize];
+  const priceNum = parseInt(priceStr.replace(/[^0-9]/g, ''));
+
+  // Validate grind if Ground
+  if (selectedBean === 'Ground') {
+    const grind = document.getElementById('grindSel').value;
+    if (!grind) {
+      alert('Please select a grind size / brew method.');
+      return;
+    }
+    const confirmed = confirm('⚠️ Ground coffee cannot be returned, exchanged, or refunded once processed.\n\nAre you sure you want to proceed?');
+    if (!confirmed) return;
+  }
+
+  const grind = selectedBean === 'Ground' ? document.getElementById('grindSel')?.value : '';
+
+  cart.push({
+    id: Date.now(),
+    name: currentItem.name,
+    process: currentItem.process,
+    size: selectedSize,
+    price: priceNum,
+    priceStr: priceStr,
+    bean: selectedBean,
+    grind: grind,
+  });
+
+  updateCartUI();
+  closeModal();
+
+  // Reset defaults
+  selectedSize = '200g';
+  selectedBean = 'Whole Bean';
+}
+
+function updateCartUI() {
+  const count = cart.length;
+  const fab = document.getElementById('cartFab');
+  const badge = document.getElementById('cartBadge');
+  badge.textContent = count;
+  fab.classList.toggle('hidden', count === 0);
+  renderCartItems();
+}
+
+function renderCartItems() {
+  const wrap = document.getElementById('cartItems');
+  const summary = document.getElementById('cartSummary');
+
+  if (cart.length === 0) {
+    wrap.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
+    summary.innerHTML = '';
+    return;
+  }
+
+  wrap.innerHTML = cart.map(item => `
+    <div class="cart-item">
+      <div class="ci-info">
+        <div class="ci-name">${item.name}</div>
+        <div class="ci-detail">${item.size} · ${item.bean}${item.grind ? ' · ' + item.grind : ''}</div>
+        <div class="ci-price">${item.priceStr}</div>
+      </div>
+      <button class="ci-remove" onclick="removeItem(${item.id})">×</button>
+    </div>
+  `).join('');
+
+  const subtotal = cart.reduce((s, i) => s + i.price, 0);
+  const total = subtotal + ADMIN_FEE;
+
+  summary.innerHTML = `
+    <div class="summary-row"><span>Subtotal</span><span>Rp ${subtotal.toLocaleString('id-ID')}</span></div>
+    <div class="summary-row"><span>Admin fee</span><span>Rp ${ADMIN_FEE.toLocaleString('id-ID')}</span></div>
+    <div class="summary-row total"><span>Total</span><span>Rp ${total.toLocaleString('id-ID')}</span></div>
+  `;
+}
+
+function removeItem(id) {
+  cart = cart.filter(i => i.id !== id);
+  updateCartUI();
+}
+
+function openCart() {
+  document.getElementById('cartOverlay').classList.add('show');
+}
+
+function closeCart(e) {
+  if (!e || e.target === document.getElementById('cartOverlay') || e.currentTarget.tagName === 'BUTTON') {
+    document.getElementById('cartOverlay').classList.remove('show');
+  }
+}
+
+function orderViaWA() {
+  if (cart.length === 0) return;
+  const name = document.getElementById('customerName').value.trim();
+  if (!name) {
+    document.getElementById('customerName').focus();
+    document.getElementById('customerName').style.borderColor = '#E84A3A';
+    document.getElementById('customerName').placeholder = 'Please enter your name first...';
+    return;
+  }
+  document.getElementById('customerName').style.borderColor = '';
+  const subtotal = cart.reduce((s, i) => s + i.price, 0);
+  const total = subtotal + ADMIN_FEE;
+
+  let msg = `Hello Hungry Bird! 🐦\n\nOrder from: *${name}*\n\nI'd like to place an order:\n\n`;
+  cart.forEach((item, i) => {
+    msg += `${i + 1}. ${item.name}\n`;
+    msg += `   ${item.size} | ${item.bean}`;
+    if (item.grind) msg += ` | ${item.grind}`;
+    msg += `\n   ${item.priceStr}\n\n`;
+  });
+  msg += `Subtotal: Rp ${subtotal.toLocaleString('id-ID')}\n`;
+  msg += `Admin fee: Rp ${ADMIN_FEE.toLocaleString('id-ID')}\n`;
+  msg += `*TOTAL: Rp ${total.toLocaleString('id-ID')}*\n\n`;
+  msg += `Please confirm availability. Thank you! ☕`;
+
+  const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+
+function orderViaOpaper() {
+  window.open('https://www.opaper.app/hungry_bird_coffee__roaster', '_blank');
+}
+
+function orderViaTokopedia() {
+  window.open('https://www.tokopedia.com/hungrybirdcoffee', '_blank');
+}
+
+// ── Patch openModal to inject cart UI ──
+const _origOpenModal = openModal;
+openModal = function(b) {
+  _origOpenModal(b);
+  // Reset state
+  selectedSize = '200g';
+  selectedBean = 'Whole Bean';
+  // Inject add to cart after short delay (modal renders first)
+  setTimeout(() => injectAddToCart(b), 50);
+};
+</script>
