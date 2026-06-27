@@ -615,10 +615,25 @@ loadData();
     </div>
     <div class="cart-footer">
       <div class="cart-summary" id="cartSummary"></div>
-      <button class="wa-btn" onclick="orderViaWA()">
+      <div style="margin-bottom:10px">
+        <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Your Name</div>
+        <input type="text" id="customerName" placeholder="Enter your name..." style="width:100%;padding:10px 12px;font-size:13px;font-family:Inter,sans-serif;border:1px solid var(--border);border-radius:8px;background:var(--cream);color:var(--text);outline:none;-webkit-appearance:none" />
+      </div>
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Order via</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+      <button class="wa-btn" onclick="orderViaWA()" style="background:#25D366">
         <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.918-1.417A9.956 9.956 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
-        Order via WhatsApp
+        WhatsApp
       </button>
+      <button class="wa-btn" onclick="orderViaOpaper()" style="background:#1E2D47">
+        <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Opaper
+      </button>
+      <button class="wa-btn" onclick="orderViaTokopedia()" style="background:#03AC0E">
+        <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.95-1.57L23 6H6"/></svg>
+        Tokopedia
+      </button>
+      </div>
     </div>
   </div>
 </div>
@@ -809,10 +824,18 @@ function closeCart(e) {
 
 function orderViaWA() {
   if (cart.length === 0) return;
+  const name = document.getElementById('customerName').value.trim();
+  if (!name) {
+    document.getElementById('customerName').focus();
+    document.getElementById('customerName').style.borderColor = '#E84A3A';
+    document.getElementById('customerName').placeholder = 'Please enter your name first...';
+    return;
+  }
+  document.getElementById('customerName').style.borderColor = '';
   const subtotal = cart.reduce((s, i) => s + i.price, 0);
   const total = subtotal + ADMIN_FEE;
 
-  let msg = `Hello Hungry Bird! 🐦\n\nI'd like to place an order:\n\n`;
+  let msg = `Hello Hungry Bird! 🐦\n\nOrder from: *${name}*\n\nI'd like to place an order:\n\n`;
   cart.forEach((item, i) => {
     msg += `${i + 1}. ${item.name}\n`;
     msg += `   ${item.size} | ${item.bean}`;
@@ -826,6 +849,14 @@ function orderViaWA() {
 
   const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
   window.open(url, '_blank');
+}
+
+function orderViaOpaper() {
+  window.open('https://www.opaper.app/hungry_bird_coffee__roaster', '_blank');
+}
+
+function orderViaTokopedia() {
+  window.open('https://www.tokopedia.com/hungrybirdcoffee', '_blank');
 }
 
 // ── Patch openModal to inject cart UI ──
