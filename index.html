@@ -284,20 +284,35 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);di
 const SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQzjiQefUe1FhgqFshxjIA74Ti7MH_q6YYq3ZmN7t6_udixbRAhH08fzj6O2JwQBsjeeiB0S9-ikJf5/pub?gid=603533182&single=true&output=csv';
 
 const FOTO = {
+  // Filter
   'Bali Munduk': 'foto/munduk.jpg',
   'Garut Collective': 'foto/garut-collective.jpg',
   'Sunda Klasik': 'foto/sunda-klasik.jpg',
   'Ethiopia Mewa': 'foto/mewa.jpg',
+  'Ethiopia Boturo': 'foto/boturo.jpg',
   'Argopuro Walida': 'foto/argopuro-walida.jpg',
   'Karamo G1': 'foto/karamo.jpg',
-  'Bali Kintamani Arca Ulian': 'foto/kintamani.jpg',
+  'Bali Kintamani Arca Ulian': 'foto/kintamani.jpg',   // fallback (Washed)
+  'Bali Kintamani Usda Ulian': 'foto/usda-ulian.jpg',
+  // Espresso
   'Berawa Blend': 'foto/berawa-blend.jpg',
-  'Made in Canggu Blend': 'foto/guji-siko.jpg',
+  'Indo Blend': 'foto/indo-blend.jpg',
+  'Made in Canggu Blend': 'foto/made-in-canggu.jpg',
   'Ease Blend': 'foto/ease-blend.jpg',
   'Brazil': 'foto/brazil.jpg',
   'Colombian Decaffeinated': 'foto/colombia-decaff.jpg',
-  'Bali Munduk Espresso': 'foto/munduk-espresso.jpg',
 };
+
+// Override spesifik per kategori + proses (prioritas lebih tinggi dari FOTO)
+const FOTO_SPESIFIK = {
+  'Filter|Bali Kintamani Arca Ulian|Honey': 'foto/ulian-honey.jpg',
+  'Filter|Bali Kintamani Arca Ulian|Natural': 'foto/ulian-natural.jpg',
+  'Espresso|Bali Munduk|Natural': 'foto/munduk-espresso.jpg',
+};
+
+function getFoto(b){
+  return FOTO_SPESIFIK[b.cat+'|'+b.name+'|'+b.process] || FOTO[b.name] || '';
+}
 
 const PRICE = {
   R1:{g200:'Rp 135.000',g500:'Rp 255.000',g1kg:'Rp 435.000'},
@@ -476,7 +491,7 @@ function makeCard(b){
   const el=document.createElement('div');el.className='card';
   const pr=PRICE[b.code]||PRICE.R1;
   const isEsp=b.cat==='Espresso';
-  const foto=FOTO[b.name]||'';
+  const foto=getFoto(b);
   el.innerHTML=`
     <div class="card-img${isEsp?' espresso-bg':''}">
       ${foto?`<img src="${foto}" alt="${b.name}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">`:''}
@@ -496,7 +511,7 @@ function makeRow(b){
   const el=document.createElement('div');el.className='list-item';
   const pr=PRICE[b.code]||PRICE.R1;
   const isEsp=b.cat==='Espresso';
-  const fotoR=FOTO[b.name]||'';
+  const fotoR=getFoto(b);
   el.innerHTML=`
     <div class="list-thumb${isEsp?' esp':''}">
       ${fotoR?`<img src="${fotoR}" alt="${b.name}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">`:navyAvatar(b.name,'sm',b.cat)}
@@ -512,11 +527,10 @@ function makeRow(b){
 function openModal(b){
   const pr=PRICE[b.code]||PRICE.R1;
   const isEsp=b.cat==='Espresso';
-  const bigIcon=navyAvatar(b.name,'lg',b.cat);
-  const fotoM=FOTO[b.name]||'';
+  const fotoM=getFoto(b);
   document.getElementById('modalContent').innerHTML=`
     <div class="modal-img${isEsp?' esp-img':''}">
-      ${navyAvatar(b.name,'lg',b.cat)}
+      ${fotoM?`<img src="${fotoM}" alt="${b.name}" onerror="this.parentElement.innerHTML=navyAvatar('${b.name.replace(/'/g,"\\'")}','lg','${b.cat}')">`:navyAvatar(b.name,'lg',b.cat)}
     </div>
     <div class="modal-body">
       <div class="modal-badge${isEsp?' esp':''}">${b.cat}</div>
