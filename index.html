@@ -22,35 +22,27 @@
 html,body{height:100%;overflow:hidden}
 body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);display:flex;flex-direction:column}
 
-/* ── NAV ── */
-.nav{background:var(--navy);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.nav-logo{display:flex;align-items:center;gap:10px}
-.nav-logo img{height:28px;filter:brightness(0) invert(1);object-fit:contain}
-.nav-logo-text{font-family:'Playfair Display',serif;font-size:20px;color:var(--cream);font-weight:400;letter-spacing:-.3px}
-.nav-actions{display:flex;gap:8px}
-.nav-btn{width:32px;height:32px;border-radius:50%;border:1px solid rgba(247,246,242,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent}
-.nav-btn svg{width:14px;height:14px;stroke:var(--cream);fill:none;stroke-width:1.5}
-
-/* ── HERO ── */
-.hero{background:var(--navy);padding:2px 18px 12px;flex-shrink:0}
-.hero-sub{font-size:8px;color:rgba(247,246,242,.45);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
-.hero-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);font-weight:400;line-height:1.1}
-.hero-title em{font-style:italic;color:var(--navy-light)}
-.open-badge{display:inline-flex;align-items:center;gap:5px;margin-top:6px;background:rgba(247,246,242,.1);border:1px solid rgba(247,246,242,.15);border-radius:20px;padding:3px 9px;font-size:9px;color:var(--cream)}
-.open-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+/* ── HEADER (nav + status merged) ── */
+.header{background:var(--navy);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:10px}
+.header-logo{font-family:'Playfair Display',serif;font-size:18px;color:var(--cream);font-weight:400;letter-spacing:-.3px;white-space:nowrap}
+.header-status{display:flex;align-items:center;gap:6px;background:rgba(247,246,242,.1);border:1px solid rgba(247,246,242,.15);border-radius:20px;padding:5px 10px;font-size:10px;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .dot-open{background:#4ADE80;animation:pulse 2s infinite}
 .dot-closed{background:#F87171}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.header-actions{display:flex;gap:6px;flex-shrink:0}
+.nav-btn{width:28px;height:28px;border-radius:50%;border:1px solid rgba(247,246,242,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent;flex-shrink:0}
+.nav-btn svg{width:13px;height:13px;stroke:var(--cream);fill:none;stroke-width:1.5}
 
 /* ── TOOLBAR ── */
-.toolbar{background:var(--cream);padding:8px 18px 0;flex-shrink:0}
+.toolbar{background:var(--cream);padding:10px 18px 0;flex-shrink:0}
 .search-box{background:var(--white);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;gap:8px;padding:0 12px;margin-bottom:11px}
 .search-box svg{width:13px;height:13px;stroke:var(--muted);fill:none;stroke-width:1.5;flex-shrink:0}
 .search-box input{border:none;background:transparent;padding:10px 0;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);outline:none;width:100%;-webkit-appearance:none}
 .search-box input::placeholder{color:var(--muted)}
 
 /* ── CAT TABS ── */
-.cat-row{display:flex;gap:6px;padding:0 18px 8px;background:var(--cream);overflow-x:auto;flex-shrink:0}
+.cat-row{display:flex;gap:6px;padding:10px 18px 8px;background:var(--cream);overflow-x:auto;flex-shrink:0}
 .cat-row::-webkit-scrollbar{display:none}
 .ctab{padding:6px 16px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:'Inter',sans-serif;border:none;letter-spacing:.2px}
 .ctab-on{background:var(--navy);color:var(--cream)}
@@ -174,26 +166,19 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);di
 </head>
 <body>
 
-<nav class="nav">
-  <div class="nav-logo">
-    <div class="nav-logo-text">Hungry Bird</div>
+<div class="header">
+  <div class="header-logo">Hungry Bird</div>
+  <div class="header-status" id="statusBadge">
+    <div class="status-dot dot-open" id="statusDot"></div>
+    <span id="statusText">Beans In Stock · Open 08.00–17.00</span>
   </div>
-  <div class="nav-actions">
+  <div class="header-actions">
     <button class="nav-btn" onclick="scrollToFooter()" title="Info cafe" aria-label="Info cafe">
       <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
     </button>
     <button class="nav-btn" onclick="toggleSearch()" title="Cari" aria-label="Cari kopi">
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     </button>
-  </div>
-</nav>
-
-<div class="hero">
-  <div class="hero-sub">Current Offerings</div>
-  <div class="hero-title">Coffee <em>List.</em></div>
-  <div class="open-badge" id="openBadge">
-    <div class="open-dot dot-open" id="openDot"></div>
-    <span id="openText">Open today · 08.00–17.00</span>
   </div>
 </div>
 
@@ -351,16 +336,16 @@ const DEMO=[
 
 let allData=[], viewMode='grid', activeCat='all', activeProcess='';
 
-// Open/closed badge
+// Status badge — In stock / open state
 function checkOpenStatus(){
   const now=new Date();
   const h=now.getHours(), m=now.getMinutes();
   const totalMin=h*60+m;
   const isOpen=totalMin>=480&&totalMin<1020; // 08:00–17:00
-  const dot=document.getElementById('openDot');
-  const txt=document.getElementById('openText');
-  if(isOpen){dot.className='open-dot dot-open';txt.textContent='Open now · Closes at 17.00';}
-  else{dot.className='open-dot dot-closed';txt.textContent='Closed · Opens at 08.00';}
+  const dot=document.getElementById('statusDot');
+  const txt=document.getElementById('statusText');
+  if(isOpen){dot.className='status-dot dot-open';txt.textContent='Beans In Stock · Open 08.00–17.00';}
+  else{dot.className='status-dot dot-closed';txt.textContent='Closed Now · Opens 08.00';}
 }
 
 function parseCSV(t){
