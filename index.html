@@ -170,7 +170,7 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);di
   <div class="header-logo">Hungry Bird</div>
   <div class="header-status" id="statusBadge">
     <div class="status-dot dot-open" id="statusDot"></div>
-    <span id="statusText">Beans In Stock · Open 08.00–17.00</span>
+    <span id="statusText">In Stock · Open 08.00–17.00</span>
   </div>
   <div class="header-actions">
     <button class="nav-btn" onclick="scrollToFooter()" title="Info cafe" aria-label="Info cafe">
@@ -344,7 +344,7 @@ function checkOpenStatus(){
   const isOpen=totalMin>=480&&totalMin<1020; // 08:00–17:00
   const dot=document.getElementById('statusDot');
   const txt=document.getElementById('statusText');
-  if(isOpen){dot.className='status-dot dot-open';txt.textContent='Beans In Stock · Open 08.00–17.00';}
+  if(isOpen){dot.className='status-dot dot-open';txt.textContent='In Stock · Open 08.00–17.00';}
   else{dot.className='status-dot dot-closed';txt.textContent='Closed Now · Opens 08.00';}
 }
 
