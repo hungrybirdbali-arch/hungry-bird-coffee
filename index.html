@@ -32,32 +32,32 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);di
 .nav-btn svg{width:14px;height:14px;stroke:var(--cream);fill:none;stroke-width:1.5}
 
 /* ── HERO ── */
-.hero{background:var(--navy);padding:2px 18px 20px;flex-shrink:0}
-.hero-sub{font-size:9px;color:rgba(247,246,242,.45);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:5px}
-.hero-title{font-family:'Playfair Display',serif;font-size:28px;color:var(--cream);font-weight:400;line-height:1.15}
+.hero{background:var(--navy);padding:2px 18px 12px;flex-shrink:0}
+.hero-sub{font-size:8px;color:rgba(247,246,242,.45);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
+.hero-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--cream);font-weight:400;line-height:1.1}
 .hero-title em{font-style:italic;color:var(--navy-light)}
-.open-badge{display:inline-flex;align-items:center;gap:5px;margin-top:10px;background:rgba(247,246,242,.1);border:1px solid rgba(247,246,242,.15);border-radius:20px;padding:4px 10px;font-size:10px;color:var(--cream)}
+.open-badge{display:inline-flex;align-items:center;gap:5px;margin-top:6px;background:rgba(247,246,242,.1);border:1px solid rgba(247,246,242,.15);border-radius:20px;padding:3px 9px;font-size:9px;color:var(--cream)}
 .open-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
 .dot-open{background:#4ADE80;animation:pulse 2s infinite}
 .dot-closed{background:#F87171}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
 /* ── TOOLBAR ── */
-.toolbar{background:var(--cream);padding:12px 18px 0;flex-shrink:0}
+.toolbar{background:var(--cream);padding:8px 18px 0;flex-shrink:0}
 .search-box{background:var(--white);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;gap:8px;padding:0 12px;margin-bottom:11px}
 .search-box svg{width:13px;height:13px;stroke:var(--muted);fill:none;stroke-width:1.5;flex-shrink:0}
 .search-box input{border:none;background:transparent;padding:10px 0;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);outline:none;width:100%;-webkit-appearance:none}
 .search-box input::placeholder{color:var(--muted)}
 
 /* ── CAT TABS ── */
-.cat-row{display:flex;gap:6px;padding:0 18px 11px;background:var(--cream);overflow-x:auto;flex-shrink:0}
+.cat-row{display:flex;gap:6px;padding:0 18px 8px;background:var(--cream);overflow-x:auto;flex-shrink:0}
 .cat-row::-webkit-scrollbar{display:none}
 .ctab{padding:6px 16px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:'Inter',sans-serif;border:none;letter-spacing:.2px}
 .ctab-on{background:var(--navy);color:var(--cream)}
 .ctab-off{background:transparent;color:var(--muted);border:1px solid var(--border)}
 
 /* ── PROCESS PILLS ── */
-.pill-row{display:flex;gap:6px;padding:0 18px 12px;background:var(--cream);overflow-x:auto;flex-shrink:0}
+.pill-row{display:flex;gap:6px;padding:0 18px 9px;background:var(--cream);overflow-x:auto;flex-shrink:0}
 .pill-row::-webkit-scrollbar{display:none}
 .ppill{padding:4px 12px;border-radius:20px;font-size:10px;white-space:nowrap;flex-shrink:0;cursor:pointer;font-family:'Inter',sans-serif;border:none;letter-spacing:.2px}
 .ppill-on{background:var(--navy-mid);color:var(--white)}
@@ -190,7 +190,7 @@ body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);di
 
 <div class="hero">
   <div class="hero-sub">Current Offerings</div>
-  <div class="hero-title">Coffee<br><em>List.</em></div>
+  <div class="hero-title">Coffee <em>List.</em></div>
   <div class="open-badge" id="openBadge">
     <div class="open-dot dot-open" id="openDot"></div>
     <span id="openText">Open today · 08.00–17.00</span>
